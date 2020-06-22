@@ -1,6 +1,12 @@
 package com.springBootRest.serviceImpl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springBootRest.model.CommanConstant;
@@ -10,13 +16,6 @@ import com.springBootRest.model.UserMaster;
 import com.springBootRest.repository.UserDetailsRepository;
 import com.springBootRest.repository.UserMasterRepository;
 import com.springBootRest.service.UserService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,37 +27,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDetailsRepository userDetailsRepository;
 
-
-    @Override
-    public String getUserByFirstNameAndLastName(String dashboardRequest) throws Exception {
-        LOGGER.trace("Starting getUserByFirstNameAndLastName() from UserServiceImpl with arguments:: dashboardRequest: "+dashboardRequest);
-        String returnValue = null;
-        String errorMsg = null;
-        DashboardResponse dashboardResponse = new DashboardResponse();
-        try {
-            JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
-            String firstName = requestJsonNode.get("firstName").asText();
-            String lastName = requestJsonNode.get("lastName").asText();
-
-            UserDetails userDetails = this.userDetailsRepository.findUserByFirstNameAndLastName(firstName, lastName);
-            if(userDetails != null) {
-                dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-                dashboardResponse.setResponseData("USER", userDetails);
-            } else
-                errorMsg = "No Records found for requested input.";
-
-        } catch (Exception e) {
-            errorMsg = "Following exception occur while fetching User Details.";
-            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
-        }
-        if(errorMsg != null){
-            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
-            dashboardResponse.setErrorMsg(errorMsg);
-        }
-        returnValue = MAPPER.writeValueAsString(dashboardResponse);
-        LOGGER.trace("Exiting getUserByFirstNameAndLastName() from UserServiceImpl with return:: returnValue: "+returnValue);
-        return returnValue;
-    }
 
     @Override
     public String getAllUsers() throws Exception {
@@ -86,35 +54,6 @@ public class UserServiceImpl implements UserService {
         }
         returnValue = MAPPER.writeValueAsString(dashboardResponse);
         LOGGER.trace("Exiting getAllUsers() from UserServiceImpl with return:: returnValue: "+returnValue);
-        return returnValue;
-    }
-
-    @Override
-    public String getAllActiveUsers() throws Exception {
-        LOGGER.trace("Starting getAllActiveUsers() from UserServiceImpl");
-        String returnValue = null;
-        String errorMsg = null;
-        DashboardResponse dashboardResponse = new DashboardResponse();
-        try {
-
-            List<UserDetails> activeUserDetailsList = this.userDetailsRepository.findAll();
-            LOGGER.trace("ACTIVE_USER_DETAILS_LIST:: "+activeUserDetailsList);
-            if(!activeUserDetailsList.isEmpty()) {
-                dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-                dashboardResponse.setResponseData("User", activeUserDetailsList);
-            } else
-                errorMsg = "No Records found for requested input.";
-
-        } catch (Exception e) {
-            errorMsg = "Following exception occur while fetching User Details.";
-            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
-        }
-        if(errorMsg != null){
-            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
-            dashboardResponse.setErrorMsg(errorMsg);
-        }
-        returnValue = MAPPER.writeValueAsString(dashboardResponse);
-        LOGGER.trace("Exiting getAllActiveUsers() from UserServiceImpl with return:: returnValue: "+returnValue);
         return returnValue;
     }
 
@@ -152,4 +91,40 @@ public class UserServiceImpl implements UserService {
 	        LOGGER.trace("Exiting createUser() from UserServiceImpl with return:: returnValue: "+returnValue);
 	        return returnValue;
 	    }
+	
+	@Override
+	public String saveUserdetails(String dashboardRequest) throws Exception {
+		 LOGGER.trace("Starting saveUserdetails() from UserServiceImpl with arguments:: dashboardRequest: "+dashboardRequest);
+	        String returnValue = null;
+	        String errorMsg = null;
+	        DashboardResponse dashboardResponse = new DashboardResponse();
+	        try {
+	        	UserDetails userDetails = MAPPER.readValue(dashboardRequest,UserDetails.class);
+	            	userDetails.setFirstName(userDetails.getFirstName());
+	            	userDetails.setLastName(userDetails.getLastName());
+	            	userDetails.setDateOfBirth(userDetails.getDateOfBirth());
+	            	userDetails.setDateOfJoining(userDetails.getDateOfJoining());
+	            	userDetails.setEmail(userDetails.getEmail());
+	            	userDetails.setActive(true);
+	                userDetails = this.userDetailsRepository.save(userDetails);
+	               if(userDetails !=null) {
+	            	   dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+	                   dashboardResponse.setResponseData("USER", userDetails);
+	                   }
+	             else
+	                errorMsg = "No Records found for Username";
+
+	        } catch (Exception e) {
+	            errorMsg = "Following exception occur while fetching User Details.";
+	            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
+	        }
+	        if(errorMsg != null){
+	            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+	            dashboardResponse.setErrorMsg(errorMsg);
+	        }
+	        returnValue = MAPPER.writeValueAsString(dashboardResponse);
+	        LOGGER.trace("Exiting saveUserdetails() from UserServiceImpl with return:: returnValue: "+returnValue);
+	        return returnValue;
+	    }
+
 }

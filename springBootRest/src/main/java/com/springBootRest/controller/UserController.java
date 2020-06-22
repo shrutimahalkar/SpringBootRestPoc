@@ -18,19 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/getUserByFirstNameAndLastName", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserByFirstNameAndLastName(@RequestBody String dashboardRequest) throws Exception {
-        LOGGER.trace("Starting getUserByFirstNameAndLastName() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
-        ResponseEntity<?> responseEntity = null;
-        String jsonString = userService.getUserByFirstNameAndLastName(dashboardRequest);
-        if(jsonString != null){
-            responseEntity = ResponseEntity.ok(jsonString);
-        } else
-            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        LOGGER.trace("Exiting getUserByFirstNameAndLastName() from UserController with return:: responseEntity: "+responseEntity);
-        return responseEntity;
-    }
-
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllUsers() throws Exception {
         LOGGER.trace("Starting getAllUsers() from UserController");
@@ -41,19 +28,6 @@ public class UserController {
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         LOGGER.trace("Exiting getAllUsers() from UserController with return:: responseEntity: "+responseEntity);
-        return responseEntity;
-    }
-
-    @RequestMapping(value = "/getAllActiveUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllActiveUsers() throws Exception {
-        LOGGER.trace("Starting getAllActiveUsers() from UserController");
-        ResponseEntity<?> responseEntity = null;
-        String jsonString = userService.getAllActiveUsers();
-        if(jsonString != null){
-            responseEntity = ResponseEntity.ok(jsonString);
-        } else
-            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        LOGGER.trace("Exiting getAllActiveUsers() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
     
@@ -69,4 +43,18 @@ public class UserController {
         LOGGER.trace("Exiting createUser() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
+    
+    @RequestMapping(value = "/saveUserdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> saveUserdetails(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting createUser() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.saveUserdetails(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting saveUserdetails() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
+
 }

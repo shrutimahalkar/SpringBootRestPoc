@@ -1,16 +1,15 @@
 package com.springBootRest.model;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import lombok.ToString;
 
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)

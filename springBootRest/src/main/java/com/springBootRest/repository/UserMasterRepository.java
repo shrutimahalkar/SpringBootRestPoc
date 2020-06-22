@@ -8,4 +8,5 @@ import com.springBootRest.model.UserMaster;
 @Repository
 public interface UserMasterRepository extends JpaRepository<UserMaster, Integer> {
 
+	UserMaster findUserByUserName(String userName);
 }
