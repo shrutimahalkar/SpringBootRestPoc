@@ -1,11 +1,13 @@
 package com.springBootRest.service;
 
-import java.util.List;
-
-import com.springBootRest.entities.UserMaster;
-
 public interface UserService {
 
-	public UserMaster createUser(UserMaster user);
-	public List<UserMaster> getAllUser();
+    public String getUserByFirstNameAndLastName(String dashboardRequest) throws Exception;
+
+    public String getAllUsers() throws Exception;
+
+    public String getAllActiveUsers() throws Exception;
+    
+    public String createUser(String dashboardRequest)throws Exception;
+
 }

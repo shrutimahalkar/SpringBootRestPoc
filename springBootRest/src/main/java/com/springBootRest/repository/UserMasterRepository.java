@@ -1,11 +1,11 @@
 package com.springBootRest.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.springBootRest.entities.UserMaster;
+import com.springBootRest.model.UserMaster;
 
 @Repository
-public interface UserMasterRepository extends CrudRepository<UserMaster, Integer> {
+public interface UserMasterRepository extends JpaRepository<UserMaster, Integer> {
 
 }

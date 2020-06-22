@@ -1,4 +1,4 @@
-package com.springBootRest.entities;
+package com.springBootRest.model;
 
 import java.util.Date;
 
@@ -6,11 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
+@Table(name = "user_employment_details")
 public class UserEmployementDetails {
 	
 	@Id
@@ -27,12 +29,8 @@ public class UserEmployementDetails {
 	private Date dateOfJoining;
 	
 	@Column(name = "yearOfExperience")
-	private Date yearOfExperience;
+	private int yearOfExperience;
 	
-	
-	@Column(name = "isActive")
-	private Boolean isActive = true;
-
 	@Column(name = "createDate", updatable = false)
 	@CreationTimestamp
 	private Date CreateDate;
@@ -73,20 +71,14 @@ public class UserEmployementDetails {
 		this.dateOfJoining = dateOfJoining;
 	}
 
-	public Date getYearOfExperience() {
+
+
+	public int getYearOfExperience() {
 		return yearOfExperience;
 	}
 
-	public void setYearOfExperience(Date yearOfExperience) {
+	public void setYearOfExperience(int yearOfExperience) {
 		this.yearOfExperience = yearOfExperience;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	public Date getCreateDate() {

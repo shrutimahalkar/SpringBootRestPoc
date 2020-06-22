@@ -1,16 +1,19 @@
-package com.springBootRest.entities;
+package com.springBootRest.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
+@Table(name = "user_master")
 public class UserMaster {
 
 	@Id
@@ -28,11 +31,11 @@ public class UserMaster {
 
 	@Column(name = "createDate", updatable = false)
 	@CreationTimestamp
-	private Date CreateDate;
+	private Timestamp CreateDate;
 
 	@Column(name = "updateDate")
 	@UpdateTimestamp
-	private Date updateDate;
+	private Timestamp updateDate;
 
 	public int getId() {
 		return id;
@@ -70,7 +73,7 @@ public class UserMaster {
 		return CreateDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(Timestamp createDate) {
 		CreateDate = createDate;
 	}
 
@@ -78,7 +81,7 @@ public class UserMaster {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
 	}
 

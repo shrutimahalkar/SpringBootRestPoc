@@ -1,15 +1,17 @@
-package com.springBootRest.entities;
+package com.springBootRest.model;
 
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
+@Table(name = "user_details")
 public class UserDetails {
 
 	@Id
@@ -33,6 +35,9 @@ public class UserDetails {
 	@Column(name="dateOfJoining")
 	private Date dateOfJoining;
 	
+	@Column(name = "is_active")
+	private boolean isActive = true;
+	
 	@Column(name="createDate",updatable = false)
 	@CreationTimestamp
 	private Date CreateDate;
@@ -41,9 +46,6 @@ public class UserDetails {
 	@Column(name="updateDate")
 	@UpdateTimestamp
 	private Date updateDate;
-
-	@Column(name = "is_active")
-	private boolean isActive = true;
 
 	public Integer getUserid() {
 		return userid;
