@@ -4,11 +4,17 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "user_details")
@@ -16,6 +22,7 @@ public class UserDetails {
 
 	@Id
 	@Column(name = "userid")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer userid;
 	
 	
@@ -29,10 +36,15 @@ public class UserDetails {
 	@Column(name="email")
 	private String email;
 	
+	@Column(name="pincode")
+	private String pincode;
+	
 	@Column(name="dateOfBirth")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Europe/Madrid")
 	private Date dateOfBirth;
 	
 	@Column(name="dateOfJoining")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Europe/Madrid")
 	private Date dateOfJoining;
 	
 	@Column(name = "is_active")
@@ -46,6 +58,10 @@ public class UserDetails {
 	@Column(name="updateDate")
 	@UpdateTimestamp
 	private Date updateDate;
+	
+	@OneToOne
+	@JoinColumn(name="userMasterId")
+	private UserMaster userMaster;
 
 	public Integer getUserid() {
 		return userid;
@@ -99,6 +115,14 @@ public class UserDetails {
 		return CreateDate;
 	}
 
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
 	public void setCreateDate(Date createDate) {
 		CreateDate = createDate;
 	}
@@ -117,6 +141,14 @@ public class UserDetails {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public UserMaster getUserMaster() {
+		return userMaster;
+	}
+
+	public void setUserMaster(UserMaster userMaster) {
+		this.userMaster = userMaster;
 	}
 	
 }

@@ -46,7 +46,7 @@ public class UserController {
     
     @RequestMapping(value = "/saveUserdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> saveUserdetails(@RequestBody String dashboardRequest) throws Exception {
-        LOGGER.trace("Starting createUser() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        LOGGER.trace("Starting saveUserdetails() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
         String jsonString = userService.saveUserdetails(dashboardRequest);
         if(jsonString != null){
@@ -54,6 +54,58 @@ public class UserController {
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         LOGGER.trace("Exiting saveUserdetails() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
+    
+    @RequestMapping(value = "/searchFnameLnamePin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchFnameLnamePin(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting searchFnameLnamePin() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.searchFnameLnamePin(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting searchFnameLnamePin() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/editUserDetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> editUserDetails(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting searchFnameLnamePin() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.editUserDetails(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting editUserDetails() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/softDelete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> softDelete(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting softDelete() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.softDelete(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting softDelete() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
+    
+    @RequestMapping(value = "/hardtDelete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> hardtDelete(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting hardtDelete() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.hardtDelete(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting hardtDelete() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
 

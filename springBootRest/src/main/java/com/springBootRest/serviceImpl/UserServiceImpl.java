@@ -1,5 +1,7 @@
 package com.springBootRest.serviceImpl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,112 +21,272 @@ import com.springBootRest.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    @Autowired
-    private UserMasterRepository userMasterRepository;
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	@Autowired
+	private UserMasterRepository userMasterRepository;
 
-    @Autowired
-    private UserDetailsRepository userDetailsRepository;
+	@Autowired
+	private UserDetailsRepository userDetailsRepository;
 
+	@Override
+	public String getAllUsers() throws Exception {
+		LOGGER.trace("Starting getAllUsers() from UserServiceImpl");
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
 
-    @Override
-    public String getAllUsers() throws Exception {
-        LOGGER.trace("Starting getAllUsers() from UserServiceImpl");
-        String returnValue = null;
-        String errorMsg = null;
-        DashboardResponse dashboardResponse = new DashboardResponse();
-        try {
+			List<UserMaster> userDetailsList = this.userMasterRepository.findAll();
+			LOGGER.trace("USER_DETAILS_LIST:: " + userDetailsList);
+			if (!userDetailsList.isEmpty()) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userDetailsList);
+			} else
+				errorMsg = "No Records found for requested input.";
 
-            List<UserMaster> userDetailsList = this.userMasterRepository.findAll();
-            LOGGER.trace("USER_DETAILS_LIST:: "+userDetailsList);
-            if(!userDetailsList.isEmpty()) {
-                dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-                dashboardResponse.setResponseData("USER", userDetailsList);
-            } else
-                errorMsg = "No Records found for requested input.";
-
-        } catch (Exception e) {
-            errorMsg = "Following exception occur while fetching User Details.";
-            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
-        }
-        if(errorMsg != null){
-            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
-            dashboardResponse.setErrorMsg(errorMsg);
-        }
-        returnValue = MAPPER.writeValueAsString(dashboardResponse);
-        LOGGER.trace("Exiting getAllUsers() from UserServiceImpl with return:: returnValue: "+returnValue);
-        return returnValue;
-    }
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while fetching User.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting getAllUsers() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
 
 	@Override
 	public String createUser(String dashboardRequest) throws Exception {
-		 LOGGER.trace("Starting createUser() from UserServiceImpl with arguments:: dashboardRequest: "+dashboardRequest);
-	        String returnValue = null;
-	        String errorMsg = null;
-	        DashboardResponse dashboardResponse = new DashboardResponse();
-	        try {
-	            JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
-	            String userName = requestJsonNode.get("userName").asText();
-	            String password = requestJsonNode.get("password").asText();
-	            UserMaster userMaster=new UserMaster();
-	            userMaster.setUserName(userName);
-	            userMaster.setPassword(password);
-	            userMaster.setIsActive(true);
-	            
-	            userMaster = this.userMasterRepository.save(userMaster);
-	            if(userMaster != null) {
-	                dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-	                dashboardResponse.setResponseData("USER", userMaster);
-	            } else
-	                errorMsg = "No Records found.";
+		LOGGER.trace("Starting createUser() from UserServiceImpl with arguments:: dashboardRequest: " + dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			String userName = requestJsonNode.get("userName").asText();
+			String password = requestJsonNode.get("password").asText();
+			UserMaster userMaster = new UserMaster();
+			userMaster.setUserName(userName);
+			userMaster.setPassword(password);
+			userMaster.setIsActive(true);
 
-	        } catch (Exception e) {
-	            errorMsg = "Following exception occur while fetching User Details.";
-	            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
-	        }
-	        if(errorMsg != null){
-	            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
-	            dashboardResponse.setErrorMsg(errorMsg);
-	        }
-	        returnValue = MAPPER.writeValueAsString(dashboardResponse);
-	        LOGGER.trace("Exiting createUser() from UserServiceImpl with return:: returnValue: "+returnValue);
-	        return returnValue;
-	    }
-	
+			userMaster = this.userMasterRepository.save(userMaster);
+			if (userMaster != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userMaster);
+			} else
+				errorMsg = "No Records found.";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while CreatingNew User.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting createUser() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
 	@Override
 	public String saveUserdetails(String dashboardRequest) throws Exception {
-		 LOGGER.trace("Starting saveUserdetails() from UserServiceImpl with arguments:: dashboardRequest: "+dashboardRequest);
-	        String returnValue = null;
-	        String errorMsg = null;
-	        DashboardResponse dashboardResponse = new DashboardResponse();
-	        try {
-	        	UserDetails userDetails = MAPPER.readValue(dashboardRequest,UserDetails.class);
-	            	userDetails.setFirstName(userDetails.getFirstName());
-	            	userDetails.setLastName(userDetails.getLastName());
-	            	userDetails.setDateOfBirth(userDetails.getDateOfBirth());
-	            	userDetails.setDateOfJoining(userDetails.getDateOfJoining());
-	            	userDetails.setEmail(userDetails.getEmail());
-	            	userDetails.setActive(true);
-	                userDetails = this.userDetailsRepository.save(userDetails);
-	               if(userDetails !=null) {
-	            	   dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-	                   dashboardResponse.setResponseData("USER", userDetails);
-	                   }
-	             else
-	                errorMsg = "No Records found for Username";
+		LOGGER.trace("Starting saveUserdetails() from UserServiceImpl with arguments:: dashboardRequest: "
+				+ dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			String userName = requestJsonNode.get("userName").asText();
+			String password = requestJsonNode.get("password").asText();
+			UserMaster userMaster = new UserMaster();
+			userMaster.setUserName(userName);
+			userMaster.setPassword(password);
+			userMaster.setIsActive(true);
 
-	        } catch (Exception e) {
-	            errorMsg = "Following exception occur while fetching User Details.";
-	            LOGGER.error(errorMsg + "\n\r : "+e.getStackTrace());
-	        }
-	        if(errorMsg != null){
-	            dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
-	            dashboardResponse.setErrorMsg(errorMsg);
-	        }
-	        returnValue = MAPPER.writeValueAsString(dashboardResponse);
-	        LOGGER.trace("Exiting saveUserdetails() from UserServiceImpl with return:: returnValue: "+returnValue);
-	        return returnValue;
-	    }
+			userMaster = this.userMasterRepository.save(userMaster);
+			
+			UserDetails userDetails =new UserDetails();
+			userDetails.setFirstName(requestJsonNode.get("firstName").asText());
+			userDetails.setLastName(requestJsonNode.get("lastName").asText());
+			
+	        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+			userDetails.setDateOfBirth(df.parse(requestJsonNode.get("dateOfBirth").asText()));
+			userDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
+			userDetails.setEmail(requestJsonNode.get("email").asText());
+			userDetails.setPincode(requestJsonNode.get("pincode").asText());
+			userDetails.setActive(true);
+			userDetails.setUserMaster(userMaster);
+			userDetails = this.userDetailsRepository.save(userDetails);
+			if (userDetails != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userDetails);
+			} else
+				errorMsg = "No Records found for Username";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while fetching User Details.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting saveUserdetails() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
+	@Override
+	public String searchFnameLnamePin(String dashboardRequest) throws Exception {
+		LOGGER.trace("Starting searchFnameLnamePin() from UserServiceImpl with arguments:: dashboardRequest: "
+				+ dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode jsonstring = MAPPER.readTree(dashboardRequest);
+			String fName = jsonstring.get("firstName").asText();
+			String lName = jsonstring.get("lastName").asText();
+			String pin = jsonstring.get("pincode").asText();
+
+			List<UserDetails> userDetails = this.userDetailsRepository.findByFirstNameOrLastNameOrPincode(fName, lName,
+					pin);
+			if (userDetails != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USERS", userDetails);
+			} else
+				errorMsg = "No Records found for Username";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while fetching User Details.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting searchFnameLnamePin() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
+	@Override
+	public String editUserDetails(String dashboardRequest) throws Exception {
+		LOGGER.trace("Starting editUserDetails() from UserServiceImpl with arguments:: dashboardRequest: "
+				+ dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode jsonstring = MAPPER.readTree(dashboardRequest);
+			int id = jsonstring.get("userid").asInt();
+			
+			UserDetails userDetails = this.userDetailsRepository.findById(id);
+			//UserMaster userMaster = this.userMasterRepository.findByUserMasterId(id);
+
+			if (userDetails != null) {
+				UserDetails userDetailsUp = MAPPER.readValue(dashboardRequest, UserDetails.class);
+				userDetails.setFirstName(userDetailsUp.getFirstName());
+				userDetails.setLastName(userDetailsUp.getLastName());
+				userDetails.setDateOfBirth(userDetailsUp.getDateOfBirth());
+				userDetails.setDateOfJoining(userDetailsUp.getDateOfJoining());
+				 userDetails.setEmail(userDetailsUp.getEmail());
+				userDetails.setPincode(userDetailsUp.getPincode());
+				System.out.println("2222222222222222222"+userDetailsUp.getUserMaster().getUserMasterId());
+				userDetails.setActive(true);
+				userDetails = this.userDetailsRepository.save(userDetails);
+				if (userDetails != null) {
+					dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+					dashboardResponse.setResponseData("USERS", userDetails);
+				}
+				else
+					errorMsg = "Error occur while Updating User";
+			} else
+				errorMsg = "No Records found for Username";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while fetching User Details.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting editUserDetails() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
+	@Override
+	public String softDelete(String dashboardRequest) throws Exception {
+		LOGGER.trace("Starting softDelete() from UserServiceImpl with arguments:: dashboardRequest: " + dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			int id = requestJsonNode.get("userMasterId").asInt();
+			UserMaster userMaster = this.userMasterRepository.findByUserMasterId(id);
+			userMaster.setUserName(userMaster.getUserName());
+			userMaster.setPassword(userMaster.getPassword());
+			userMaster.setIsActive(false);
+
+			userMaster = this.userMasterRepository.save(userMaster);
+			if (userMaster != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userMaster);
+			} else
+				errorMsg = "No Records found.";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while CreatingNew User.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting softDelete() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
+	@Override
+	public String hardtDelete(String dashboardRequest) throws Exception {
+		LOGGER.trace("Starting hardtDelete() from UserServiceImpl with arguments:: dashboardRequest: " + dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			int id = requestJsonNode.get("userMasterId").asInt();
+			UserMaster userMaster = this.userMasterRepository.deleteByUserMasterId(id);
+			if (userMaster != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userMaster);
+			} else
+				errorMsg = "No Records found.";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while CreatingNew User.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting hardtDelete() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
+
+	
 
 }

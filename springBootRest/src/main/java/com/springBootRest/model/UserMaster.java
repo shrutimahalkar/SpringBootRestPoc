@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,8 +18,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class UserMaster {
 
 	@Id
-	@GeneratedValue
-	private int id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int userMasterId;
 
 	@Column(name = "userName")
 	private String userName;
@@ -37,12 +38,14 @@ public class UserMaster {
 	@UpdateTimestamp
 	private Timestamp updateDate;
 
-	public int getId() {
-		return id;
+
+
+	public int getUserMasterId() {
+		return userMasterId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setUserMasterId(int userMasterId) {
+		this.userMasterId = userMasterId;
 	}
 
 	public String getUserName() {
