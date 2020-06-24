@@ -3,6 +3,7 @@ package com.springBootRest.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.springBootRest.model.UserDetails;
@@ -13,6 +14,15 @@ public interface UserDetailsRepository extends JpaRepository<UserDetails, Intege
 
 	List<UserDetails> findByFirstNameOrLastNameOrPincode(String fName, String lName, String pin);
 
-	UserDetails findById(int id);
+	@Query("select e from UserDetails e order by dateOfBirth")
+    List<UserDetails> sortByDob();
+	
+	@Query("select e from UserDetails e order by dateOfJoining")
+    List<UserDetails> sortByDoj();
+
+
+	UserDetails findByUserId(int id);
+
+
 
 }

@@ -2,6 +2,7 @@ package com.springBootRest.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ public class UserDetails {
 	@Id
 	@Column(name = "userid")
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userid;
+	private Integer userId;
 	
 	
 	@Column(name ="firstName")
@@ -59,16 +60,16 @@ public class UserDetails {
 	@UpdateTimestamp
 	private Date updateDate;
 	
-	@OneToOne
-	@JoinColumn(name="userMasterId")
+	@OneToOne(cascade =CascadeType.ALL)
+	@JoinColumn(name="user_master_id")
 	private UserMaster userMaster;
 
-	public Integer getUserid() {
-		return userid;
+	public Integer getUserId() {
+		return userId;
 	}
 
-	public void setUserid(Integer userid) {
-		this.userid = userid;
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public String getFirstName() {

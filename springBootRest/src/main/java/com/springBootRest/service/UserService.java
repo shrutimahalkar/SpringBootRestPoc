@@ -14,7 +14,11 @@ public interface UserService {
 
 	public String softDelete(String dashboardRequest)throws Exception;
 
-	public String hardtDelete(String dashboardRequest)throws Exception;
+	public String hardDelete(String dashboardRequest)throws Exception;
+
+	public String sortByDob() throws Exception;
+
+	public String sortByDoj()throws Exception;
     
     
 

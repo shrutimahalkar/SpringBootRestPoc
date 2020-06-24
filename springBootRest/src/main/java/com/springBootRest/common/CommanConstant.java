@@ -1,4 +1,4 @@
-package com.springBootRest.model;
+package com.springBootRest.common;
 
 public class CommanConstant {
 
