@@ -1,5 +1,6 @@
 package com.springBootRest.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -19,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "user_details")
-public class UserDetails {
-
+public class UserDetails implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "userid")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -63,6 +64,20 @@ public class UserDetails {
 	@OneToOne(cascade =CascadeType.ALL)
 	@JoinColumn(name="user_master_id")
 	private UserMaster userMaster;
+	
+	@OneToOne(cascade =CascadeType.ALL)
+	@JoinColumn(name="empId")
+	private UserEmployementDetails userEmployementDetails;
+
+	
+
+	public UserEmployementDetails getUserEmployementDetails() {
+		return userEmployementDetails;
+	}
+
+	public void setUserEmployementDetails(UserEmployementDetails userEmployementDetails) {
+		this.userEmployementDetails = userEmployementDetails;
+	}
 
 	public Integer getUserId() {
 		return userId;

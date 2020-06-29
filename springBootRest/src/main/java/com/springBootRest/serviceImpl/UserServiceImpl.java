@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springBootRest.common.CommanConstant;
 import com.springBootRest.common.DashboardResponse;
 import com.springBootRest.common.UserDetailsBean;
-import com.springBootRest.common.UserMasterBean;
+import com.springBootRest.common.UserManagmentBean;
 import com.springBootRest.model.UserDetails;
+import com.springBootRest.model.UserEmployementDetails;
 import com.springBootRest.model.UserMaster;
 import com.springBootRest.repository.UserDetailsRepository;
+import com.springBootRest.repository.UserEmployementDetailsRepository;
 import com.springBootRest.repository.UserMasterRepository;
 import com.springBootRest.service.UserService;
 
@@ -31,6 +33,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDetailsRepository userDetailsRepository;
+	
+	@Autowired
+	private UserEmployementDetailsRepository userEmployementDetailsRepository;
+
 
 	@Override
 	public String getAllUsers() throws Exception {
@@ -41,15 +47,18 @@ public class UserServiceImpl implements UserService {
 		try {
 			List<UserDetails> userDetailsList = this.userDetailsRepository.findAll();
 			LOGGER.trace("USER_DETAILS_LIST:: " + userDetailsList);
-			List<UserDetailsBean> userDetailsBeanList = new ArrayList<>();
+			List<UserManagmentBean> userDetailsBeanList = new ArrayList<>();
 			for (UserDetails userDetails : userDetailsList) {
-				UserDetailsBean userDetailsBean = new UserDetailsBean();
+				UserManagmentBean userDetailsBean = new UserManagmentBean();
+				userDetailsBean.setUserName(userDetails.getUserMaster().getUserName());
 				userDetailsBean.setFirstName(userDetails.getFirstName());
 				userDetailsBean.setLastName(userDetails.getLastName());
 				userDetailsBean.setEmail(userDetails.getEmail());
 				userDetailsBean.setDateOfBirth(userDetails.getDateOfBirth().toString());
 				userDetailsBean.setDateOfJoining(userDetails.getDateOfJoining().toString());
 				userDetailsBean.setPincode(userDetails.getPincode());
+				userDetailsBean.setCompanyName(userDetails.getUserEmployementDetails().getCompanyName());
+				userDetailsBean.setLocation(userDetails.getUserEmployementDetails().getLocation());
 				userDetailsBeanList.add(userDetailsBean);
 			}
 			if (!userDetailsBeanList.isEmpty()) {
@@ -113,6 +122,8 @@ public class UserServiceImpl implements UserService {
 				+ dashboardRequest);
 		String returnValue = null;
 		String errorMsg = null;
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
 		DashboardResponse dashboardResponse = new DashboardResponse();
 		try {
 			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
@@ -124,12 +135,20 @@ public class UserServiceImpl implements UserService {
 			userMaster.setIsActive(true);
 
 			userMaster = this.userMasterRepository.save(userMaster);
+			
+			UserEmployementDetails userEmployementDetails =new UserEmployementDetails();
+			userEmployementDetails.setCompanyName(requestJsonNode.get("comapanyName").asText());
+			userEmployementDetails.setLocation(requestJsonNode.get("location").asText());
+			userEmployementDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
+			userEmployementDetails.setYearOfExperience(requestJsonNode.get("yearOfExperience").asInt());
+
+			
+			userEmployementDetails =userEmployementDetailsRepository.save(userEmployementDetails);
 
 			UserDetails userDetails = new UserDetails();
 			userDetails.setFirstName(requestJsonNode.get("firstName").asText());
 			userDetails.setLastName(requestJsonNode.get("lastName").asText());
 
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 			userDetails.setDateOfBirth(df.parse(requestJsonNode.get("dateOfBirth").asText()));
 			userDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
@@ -137,7 +156,9 @@ public class UserServiceImpl implements UserService {
 			userDetails.setPincode(requestJsonNode.get("pincode").asText());
 			userDetails.setActive(true);
 			userDetails.setUserMaster(userMaster);
+			userDetails.setUserEmployementDetails(userEmployementDetails);
 			userDetails = this.userDetailsRepository.save(userDetails);
+			
 			if (userDetails != null) {
 				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
 				dashboardResponse.setResponseData("USER", "User Successfully get Created");

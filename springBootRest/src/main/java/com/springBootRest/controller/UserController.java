@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import com.springBootRest.service.UserService;
 
 @RestController
-public class UserController {
+//@RequestMapping("/users")
+
+public class UserController extends ValidationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -35,11 +37,14 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting createUser() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
+        if(validMaster(dashboardRequest).equals("valid")){
         String jsonString = userService.createUser(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+            responseEntity = ResponseEntity.ok(validMaster(dashboardRequest));
         LOGGER.trace("Exiting createUser() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
@@ -48,11 +53,14 @@ public class UserController {
     public ResponseEntity<?> saveUserdetails(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting saveUserdetails() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
+        if(validDetails(dashboardRequest).equals("valid")){
         String jsonString = userService.saveUserdetails(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+            responseEntity = ResponseEntity.ok(validDetails(dashboardRequest));
         LOGGER.trace("Exiting saveUserdetails() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
@@ -74,12 +82,15 @@ public class UserController {
     public ResponseEntity<?> editUserDetails(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting searchFnameLnamePin() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
+        if(validDetails(dashboardRequest).equals("valid")){
         String jsonString = userService.editUserDetails(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        LOGGER.trace("Exiting editUserDetails() from UserController with return:: responseEntity: "+responseEntity);
+        } else
+            responseEntity = ResponseEntity.ok(validDetails(dashboardRequest));
+        LOGGER.trace("Exiting saveUserdetails() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
 
@@ -87,11 +98,14 @@ public class UserController {
     public ResponseEntity<?> softDelete(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting softDelete() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
+        if(validMaster(dashboardRequest).equals("valid")){
         String jsonString = userService.softDelete(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+            responseEntity = ResponseEntity.ok(validMaster(dashboardRequest));
         LOGGER.trace("Exiting softDelete() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
@@ -100,11 +114,14 @@ public class UserController {
     public ResponseEntity<?> hardtDelete(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting hardtDelete() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
+        if(validMaster(dashboardRequest).equals("valid")){
         String jsonString = userService.hardDelete(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else
+            responseEntity = ResponseEntity.ok(validMaster(dashboardRequest));
         LOGGER.trace("Exiting hardtDelete() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }

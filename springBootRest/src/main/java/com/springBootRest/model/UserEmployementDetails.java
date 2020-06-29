@@ -1,5 +1,6 @@
 package com.springBootRest.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,8 +15,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "user_employment_details")
-public class UserEmployementDetails {
-	
+public class UserEmployementDetails implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int empId;
@@ -25,13 +27,13 @@ public class UserEmployementDetails {
 
 	@Column(name = "location")
 	private String location;
-	
+
 	@Column(name = "dateOfJoining")
 	private Date dateOfJoining;
-	
+
 	@Column(name = "yearOfExperience")
 	private int yearOfExperience;
-	
+
 	@Column(name = "createDate", updatable = false)
 	@CreationTimestamp
 	private Date CreateDate;
@@ -39,6 +41,7 @@ public class UserEmployementDetails {
 	@Column(name = "updateDate")
 	@UpdateTimestamp
 	private Date updateDate;
+
 
 	public int getEmpId() {
 		return empId;
@@ -72,8 +75,6 @@ public class UserEmployementDetails {
 		this.dateOfJoining = dateOfJoining;
 	}
 
-
-
 	public int getYearOfExperience() {
 		return yearOfExperience;
 	}
@@ -97,6 +98,5 @@ public class UserEmployementDetails {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	
 
 }
