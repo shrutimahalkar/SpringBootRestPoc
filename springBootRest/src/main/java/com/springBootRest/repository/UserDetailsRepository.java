@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.springBootRest.model.UserDetails;
+import com.springBootRest.model.UserMaster;
 
 @Repository
 public interface UserDetailsRepository extends JpaRepository<UserDetails, Integer> {
@@ -22,6 +23,8 @@ public interface UserDetailsRepository extends JpaRepository<UserDetails, Intege
 
 
 	UserDetails findByUserId(int id);
+
+	UserDetails findByUserMaster(UserMaster userMaster);
 
 
 

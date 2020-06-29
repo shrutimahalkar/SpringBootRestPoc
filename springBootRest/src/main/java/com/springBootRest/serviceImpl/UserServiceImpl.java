@@ -36,8 +36,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserEmployementDetailsRepository userEmployementDetailsRepository;
-
-
+	
 	@Override
 	public String getAllUsers() throws Exception {
 		LOGGER.trace("Starting getAllUsers() from UserServiceImpl");
@@ -283,7 +282,10 @@ public class UserServiceImpl implements UserService {
 			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
 			int id = requestJsonNode.get("userMasterId").asInt();
 			UserMaster userMaster = this.userMasterRepository.findByUserMasterId(id);
+			UserDetails userDetails =this.userDetailsRepository.findByUserMaster(userMaster);
+			userDetails.setActive(false);
 			userMaster.setIsActive(false);
+			userDetails =this.userDetailsRepository.save(userDetails);
 
 			userMaster = this.userMasterRepository.save(userMaster);
 			if (userMaster != null) {
@@ -293,7 +295,7 @@ public class UserServiceImpl implements UserService {
 				errorMsg = "No Records found.";
 
 		} catch (Exception e) {
-			errorMsg = "Following exception occur while CreatingNew User.";
+			errorMsg = "Following exception occur while deleting User.";
 			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
 		}
 		if (errorMsg != null) {
@@ -314,7 +316,7 @@ public class UserServiceImpl implements UserService {
 		DashboardResponse dashboardResponse = new DashboardResponse();
 		try {
 			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
-			int id = requestJsonNode.get("userId").asInt();
+			int id = requestJsonNode.get("userMasterId").asInt();
 			this.userDetailsRepository.deleteById(id);
 			dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
 			dashboardResponse.setResponseData("USER", "User Sucessfulyy Deleted");
