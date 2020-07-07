@@ -148,5 +148,17 @@ public class UserController extends ValidationService {
         LOGGER.trace("Exiting sortByDoj() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
+    @RequestMapping(value = "/getUserById", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserById(@RequestBody String dashboardRequest) throws Exception {
+        LOGGER.trace("Starting getUserById() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
+        ResponseEntity<?> responseEntity = null;
+        String jsonString = userService.hardDelete(dashboardRequest);
+        if(jsonString != null){
+            responseEntity = ResponseEntity.ok(jsonString);
+        } else
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.trace("Exiting getUserById() from UserController with return:: responseEntity: "+responseEntity);
+        return responseEntity;
+    }
 
 }
