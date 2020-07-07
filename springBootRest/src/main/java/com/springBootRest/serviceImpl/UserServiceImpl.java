@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
 			List<UserManagmentBean> userDetailsBeanList = new ArrayList<>();
 			for (UserDetails userDetails : userDetailsList) {
 				UserManagmentBean userDetailsBean = new UserManagmentBean();
+				userDetailsBean.setUserId(userDetails.getUserId().toString());
 				userDetailsBean.setUserName(userDetails.getUserMaster().getUserName());
 				userDetailsBean.setFirstName(userDetails.getFirstName());
 				userDetailsBean.setLastName(userDetails.getLastName());
@@ -316,7 +317,7 @@ public class UserServiceImpl implements UserService {
 		DashboardResponse dashboardResponse = new DashboardResponse();
 		try {
 			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
-			int id = requestJsonNode.get("userMasterId").asInt();
+			int id = requestJsonNode.get("userId").asInt();
 			this.userDetailsRepository.deleteById(id);
 			dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
 			dashboardResponse.setResponseData("USER", "User Sucessfulyy Deleted");

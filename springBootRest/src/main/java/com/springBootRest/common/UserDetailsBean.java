@@ -17,6 +17,10 @@ import lombok.Data;
 public class UserDetailsBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@JsonPropertyDescription("USERID")
+	@JsonProperty("userId")
+	private String userId;
+	
 	@JsonPropertyDescription("FIRST NAME")
 	@JsonProperty("firstName")
 	@NonNull
@@ -48,6 +52,17 @@ public class UserDetailsBean implements Serializable {
 	@JsonProperty("dateOfJoining")
 	@NonNull
 	private String dateOfJoining;
+	
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+
 
 	public String getFirstName() {
 		return firstName;

@@ -16,6 +16,10 @@ import lombok.NonNull;
 public class UserManagmentBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@JsonPropertyDescription("USERID")
+	@JsonProperty("userId")
+	private String userId;
+	
 	@JsonPropertyDescription("USER NAME")
 	@JsonProperty("userName")
 	@NonNull
@@ -91,6 +95,14 @@ public class UserManagmentBean implements Serializable {
 
 	public void setPincode(String pincode) {
 		this.pincode = pincode;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getDateOfBirth() {

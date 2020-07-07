@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.springBootRest.service.UserService;
 
 @RestController
+@CrossOrigin(origins="http://localhost:4200")  
 //@RequestMapping("/users")
-
 public class UserController extends ValidationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -114,14 +114,11 @@ public class UserController extends ValidationService {
     public ResponseEntity<?> hardtDelete(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting hardtDelete() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
-        if(validMaster(dashboardRequest).equals("valid")){
         String jsonString = userService.hardDelete(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else
-            responseEntity = ResponseEntity.ok(validMaster(dashboardRequest));
         LOGGER.trace("Exiting hardtDelete() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
