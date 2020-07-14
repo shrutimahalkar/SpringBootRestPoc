@@ -6,8 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.springBootRest.JWTConfig.JWTutil;
+import com.springBootRest.model.AuthRequest;
 import com.springBootRest.service.UserService;
 
 @RestController
@@ -19,7 +27,30 @@ public class UserController extends ValidationService {
 
     @Autowired
     private UserService userService;
-
+    
+    @Autowired
+    private JWTutil jWTutil;
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    
+    @RequestMapping("/")
+    public String welcome(){
+    	return "welcom shruti";
+    }
+    
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String generateToken(@RequestBody AuthRequest authRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
+            );
+        } catch (Exception e) {
+           // throw new Exception("inavalid username/password");
+        }
+        return jWTutil.generateToken(authRequest.getUserName());
+    }
+    
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllUsers() throws Exception {
         LOGGER.trace("Starting getAllUsers() from UserController");
@@ -82,14 +113,12 @@ public class UserController extends ValidationService {
     public ResponseEntity<?> editUserDetails(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting searchFnameLnamePin() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
-        if(validDetails(dashboardRequest).equals("valid")){
         String jsonString = userService.editUserDetails(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else
-            responseEntity = ResponseEntity.ok(validDetails(dashboardRequest));
+      
         LOGGER.trace("Exiting saveUserdetails() from UserController with return:: responseEntity: "+responseEntity);
         return responseEntity;
     }
@@ -152,7 +181,7 @@ public class UserController extends ValidationService {
     public ResponseEntity<?> getUserById(@RequestBody String dashboardRequest) throws Exception {
         LOGGER.trace("Starting getUserById() from UserController with arguments:: dashboardRequest: "+dashboardRequest);
         ResponseEntity<?> responseEntity = null;
-        String jsonString = userService.hardDelete(dashboardRequest);
+        String jsonString = userService.getUserById(dashboardRequest);
         if(jsonString != null){
             responseEntity = ResponseEntity.ok(jsonString);
         } else

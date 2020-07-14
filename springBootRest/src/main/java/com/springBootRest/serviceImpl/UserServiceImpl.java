@@ -33,10 +33,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDetailsRepository userDetailsRepository;
-	
+
 	@Autowired
 	private UserEmployementDetailsRepository userEmployementDetailsRepository;
-	
+
 	@Override
 	public String getAllUsers() throws Exception {
 		LOGGER.trace("Starting getAllUsers() from UserServiceImpl");
@@ -134,21 +134,19 @@ public class UserServiceImpl implements UserService {
 			userMaster.setPassword(password);
 			userMaster.setIsActive(true);
 
-			userMaster = this.userMasterRepository.save(userMaster);
-			
-			UserEmployementDetails userEmployementDetails =new UserEmployementDetails();
+			//userMaster = this.userMasterRepository.save(userMaster);
+
+			UserEmployementDetails userEmployementDetails = new UserEmployementDetails();
 			userEmployementDetails.setCompanyName(requestJsonNode.get("comapanyName").asText());
 			userEmployementDetails.setLocation(requestJsonNode.get("location").asText());
 			userEmployementDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
 			userEmployementDetails.setYearOfExperience(requestJsonNode.get("yearOfExperience").asInt());
 
-			
-			userEmployementDetails =userEmployementDetailsRepository.save(userEmployementDetails);
+			//userEmployementDetails = userEmployementDetailsRepository.save(userEmployementDetails);
 
 			UserDetails userDetails = new UserDetails();
 			userDetails.setFirstName(requestJsonNode.get("firstName").asText());
 			userDetails.setLastName(requestJsonNode.get("lastName").asText());
-
 
 			userDetails.setDateOfBirth(df.parse(requestJsonNode.get("dateOfBirth").asText()));
 			userDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
@@ -158,7 +156,7 @@ public class UserServiceImpl implements UserService {
 			userDetails.setUserMaster(userMaster);
 			userDetails.setUserEmployementDetails(userEmployementDetails);
 			userDetails = this.userDetailsRepository.save(userDetails);
-			
+
 			if (userDetails != null) {
 				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
 				dashboardResponse.setResponseData("USER", "User Successfully get Created");
@@ -229,35 +227,49 @@ public class UserServiceImpl implements UserService {
 				+ dashboardRequest);
 		String returnValue = null;
 		String errorMsg = null;
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
 		DashboardResponse dashboardResponse = new DashboardResponse();
 		try {
-			JsonNode jsonstring = MAPPER.readTree(dashboardRequest);
-			int id = jsonstring.get("userId").asInt();
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			int userId = requestJsonNode.get("userId").asInt();
 
-			UserDetails userDetails = this.userDetailsRepository.findByUserId(id);
-			// UserMaster userMaster =
-			// this.userMasterRepository.findByUserMasterId(id);
-
+			UserDetails userDetails = this.userDetailsRepository.findByUserId(userId);
 			if (userDetails != null) {
-				userDetails.setFirstName(jsonstring.get("firstName").asText());
-				userDetails.setLastName(jsonstring.get("lastName").asText());
-				userDetails = this.userDetailsRepository.save(userDetails);
+				String userName = requestJsonNode.get("userName").asText();
+				String password = requestJsonNode.get("password").asText();
+				UserMaster userMaster = userDetails.getUserMaster();
+				userMaster.setUserName(userName);
+				userMaster.setPassword(password);
+				userMaster.setIsActive(true);
 
-				UserDetailsBean userDetailsBean = new UserDetailsBean();
-				userDetailsBean.setFirstName(userDetails.getFirstName());
-				userDetailsBean.setLastName(userDetails.getLastName());
-				userDetailsBean.setEmail(userDetails.getEmail());
-				userDetailsBean.setDateOfBirth(userDetails.getDateOfBirth().toString());
-				userDetailsBean.setDateOfJoining(userDetails.getDateOfJoining().toString());
-				userDetailsBean.setPincode(userDetails.getPincode());
+				//userMaster = this.userMasterRepository.save(userMaster);
+
+				UserEmployementDetails userEmployementDetails =userDetails.getUserEmployementDetails();
+				userEmployementDetails.setCompanyName(requestJsonNode.get("comapanyName").asText());
+				userEmployementDetails.setLocation(requestJsonNode.get("location").asText());
+				userEmployementDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
+				userEmployementDetails.setYearOfExperience(requestJsonNode.get("yearOfExperience").asInt());
+				//userEmployementDetails = userEmployementDetailsRepository.save(userEmployementDetails);
+
+				userDetails.setFirstName(requestJsonNode.get("firstName").asText());
+				userDetails.setLastName(requestJsonNode.get("lastName").asText());
+				userDetails.setDateOfBirth(df.parse(requestJsonNode.get("dateOfBirth").asText()));
+				userDetails.setDateOfJoining(df.parse(requestJsonNode.get("dateOfJoining").asText()));
+				userDetails.setEmail(requestJsonNode.get("email").asText());
+				userDetails.setPincode(requestJsonNode.get("pincode").asText());
+				userDetails.setActive(true);
+				userDetails.setUserMaster(userMaster);
+				userDetails.setUserEmployementDetails(userEmployementDetails);
+				userDetails = this.userDetailsRepository.save(userDetails);
 
 				if (userDetails != null) {
 					dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
-					dashboardResponse.setResponseData("USERS", userDetailsBean);
+					dashboardResponse.setResponseData("USERS", userDetails);
 				} else
 					errorMsg = "Error occur while Updating User";
 			} else
-				errorMsg = "No Records found for Username";
+				errorMsg = "No Records found for User";
 
 		} catch (Exception e) {
 			errorMsg = "Following exception occur while fetching User Details.";
@@ -283,10 +295,10 @@ public class UserServiceImpl implements UserService {
 			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
 			int id = requestJsonNode.get("userMasterId").asInt();
 			UserMaster userMaster = this.userMasterRepository.findByUserMasterId(id);
-			UserDetails userDetails =this.userDetailsRepository.findByUserMaster(userMaster);
+			UserDetails userDetails = this.userDetailsRepository.findByUserMaster(userMaster);
 			userDetails.setActive(false);
 			userMaster.setIsActive(false);
-			userDetails =this.userDetailsRepository.save(userDetails);
+			userDetails = this.userDetailsRepository.save(userDetails);
 
 			userMaster = this.userMasterRepository.save(userMaster);
 			if (userMaster != null) {
@@ -417,4 +429,45 @@ public class UserServiceImpl implements UserService {
 		return returnValue;
 	}
 
+	@Override
+	public String getUserById(String dashboardRequest) throws Exception {
+		LOGGER.trace(
+				"Starting getUserById() from UserServiceImpl with arguments:: dashboardRequest: " + dashboardRequest);
+		String returnValue = null;
+		String errorMsg = null;
+		DashboardResponse dashboardResponse = new DashboardResponse();
+		try {
+			JsonNode requestJsonNode = MAPPER.readTree(dashboardRequest);
+			int id = requestJsonNode.get("userId").asInt();
+			UserDetails userDetails = this.userDetailsRepository.findByUserId(id);
+			LOGGER.trace("USER_DETAILS_LIST:: " + userDetails);
+			UserManagmentBean userDetailsBean = new UserManagmentBean();
+			userDetailsBean.setUserId(userDetails.getUserId().toString());
+			userDetailsBean.setUserName(userDetails.getUserMaster().getUserName());
+			userDetailsBean.setFirstName(userDetails.getFirstName());
+			userDetailsBean.setLastName(userDetails.getLastName());
+			userDetailsBean.setEmail(userDetails.getEmail());
+			userDetailsBean.setDateOfBirth(userDetails.getDateOfBirth().toString());
+			userDetailsBean.setDateOfJoining(userDetails.getDateOfJoining().toString());
+			userDetailsBean.setPincode(userDetails.getPincode());
+			userDetailsBean.setCompanyName(userDetails.getUserEmployementDetails().getCompanyName());
+			userDetailsBean.setLocation(userDetails.getUserEmployementDetails().getLocation());
+			if (userDetailsBean != null) {
+				dashboardResponse.setStatusCode(CommanConstant.SUCCESS_STATUS);
+				dashboardResponse.setResponseData("USER", userDetailsBean);
+			} else
+				errorMsg = "No Records found for requested input.";
+
+		} catch (Exception e) {
+			errorMsg = "Following exception occur while fetching User.";
+			LOGGER.error(errorMsg + "\n\r : " + e.getStackTrace());
+		}
+		if (errorMsg != null) {
+			dashboardResponse.setStatusCode(CommanConstant.FAIL_STATUS);
+			dashboardResponse.setErrorMsg(errorMsg);
+		}
+		returnValue = MAPPER.writeValueAsString(dashboardResponse);
+		LOGGER.trace("Exiting getUserById() from UserServiceImpl with return:: returnValue: " + returnValue);
+		return returnValue;
+	}
 }

@@ -19,6 +19,8 @@ public interface UserService {
 	public String sortByDob() throws Exception;
 
 	public String sortByDoj()throws Exception;
+
+	public String getUserById(String dashboardRequest)throws Exception;
     
     
 
